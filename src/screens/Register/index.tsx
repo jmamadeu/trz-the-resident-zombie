@@ -1,12 +1,12 @@
 import React, { FC } from "react";
 import { Text } from "react-native";
-import { Container } from "./styles";
+import Background from "../../components/Background";
 
 const Register: FC = () => {
   return (
-    <Container>
+    <Background>
       <Text>Register</Text>
-    </Container>
+    </Background>
   );
 };
 
