@@ -1,30 +1,32 @@
-import React from "react";
-import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View, Image } from "react-native";
+import React, { FC } from "react";
+import { useFonts } from "expo-font";
+import AppLoading from "expo-app-loading";
+import { StatusBar } from "react-native";
+import {
+  Rajdhani_500Medium,
+  Rajdhani_700Bold,
+} from "@expo-google-fonts/rajdhani";
+import { Routes } from "./routes";
 
-export default function App() {
+const App: FC = () => {
+  const [fontsLoaded] = useFonts({
+    Rajdhani_700Bold,
+    Rajdhani_500Medium,
+  });
+
+  if (!fontsLoaded) {
+    <AppLoading />;
+  }
   return (
-    <View style={styles.container}>
-      <Image
-        source={require("./assets/adaptive-icon.png")}
-        style={styles.logo}
+    <>
+      <StatusBar
+        barStyle='light-content'
+        backgroundColor='transparent'
+        translucent
       />
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style='auto' />
-    </View>
+      <Routes />
+    </>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  logo: {
-    width: 120,
-    height: 120,
-    margin: 10,
-  },
-});
+export default App;
