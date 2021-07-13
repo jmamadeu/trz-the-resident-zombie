@@ -5,10 +5,6 @@ import { StyleSheet, Text, View, Image } from "react-native";
 export default function App() {
   return (
     <View style={styles.container}>
-      <Image
-        source={require("./assets/adaptive-icon.png")}
-        style={styles.logo}
-      />
       <Text>Open up App.tsx to start working on your app!</Text>
       <StatusBar style='auto' />
     </View>
