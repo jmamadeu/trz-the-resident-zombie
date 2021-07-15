@@ -1,51 +1,55 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useEffect, useState } from 'react';
 import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
   StyleSheet,
-} from "react-native";
-import { Image } from "react-native";
-import Background from "../../components/Background";
-import Input from "../../components/Input";
-import { images } from "../../constants";
-import { Header, Form, Footer, Button, Title } from "./styles";
-import RNPickerSelect from "react-native-picker-select";
-import { theme } from "../../global/styles/theme";
-import { useNavigation } from "@react-navigation/native";
-import * as Location from "expo-location";
-import * as Permissions from "expo-permissions";
-import Spinner from "react-native-loading-spinner-overlay";
-import { useSignIn } from "../../hooks/signin";
+} from 'react-native';
+import { Image } from 'react-native';
+import Background from '../../components/Background';
+import Input from '../../components/Input';
+import { images } from '../../constants';
+import { Header, Form, Footer, Button, Title } from './styles';
+import RNPickerSelect from 'react-native-picker-select';
+import { theme } from '../../global/styles/theme';
+import { useNavigation } from '@react-navigation/native';
+import * as Location from 'expo-location';
+import * as Permissions from 'expo-permissions';
+import Spinner from 'react-native-loading-spinner-overlay';
+import { People, UserProperties, useSignIn } from '../../hooks/signin';
 
 const Register: FC = () => {
-  const { people, setPeople, loading, signIn } = useSignIn();
-  const [errorMsg, setErrorMsg] = useState("");
+  const { loading, signIn } = useSignIn();
+  const [errorMsg, setErrorMsg] = useState('');
   const navigation = useNavigation();
 
+  const [user, setUser] = useState<UserProperties>({
+    name: '',
+    age: 0,
+    gender: '',
+    items: '',
+    lonlat: '',
+  });
+
   const setCurrentLocation = async () => {
-    // console.log(Permissions);
     let { status } = await Permissions.askAsync(Permissions.LOCATION);
-    if (status !== "granted") {
-      setErrorMsg("Permission to access location was denied");
+    if (status !== 'granted') {
+      setErrorMsg('Permission to access location was denied');
     }
 
     let location = await Location.getCurrentPositionAsync({});
-    setPeople({
-      ...people,
-      lonlat: `POINT (${location?.coords?.latitude}${" "}${
+    setUser((oldValues) => ({
+      ...oldValues,
+      lonlat: `POINT (${location?.coords?.latitude}${' '}${
         location?.coords?.longitude
       })`,
-      items: "Fiji Water:1;Campbell Soup:1;First Aid Pouch:1;AK47:1",
-    });
+      items: 'Fiji Water:1;Campbell Soup:1;First Aid Pouch:1;AK47:1',
+    }));
   };
 
   const save = async () => {
     try {
-      signIn();
-      setTimeout(() => {
-        navigation.navigate("Home");
-      }, 5000);
+      signIn(user);
     } catch (error) {
       console.log(error);
     }
@@ -55,13 +59,13 @@ const Register: FC = () => {
   }, []);
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={{ flex: 1 }}>
       <Background>
         <Spinner
           visible={loading}
-          textContent={"Creating your account..."}
-          textStyle={{ color: "#FFF" }}
+          textContent={'Creating your account...'}
+          textStyle={{ color: '#FFF' }}
         />
         <ScrollView>
           <Header>
@@ -70,22 +74,26 @@ const Register: FC = () => {
           <Form>
             <Input
               name='NAME'
-              onChangeText={(text) => setPeople({ ...people, name: text })}
+              onChangeText={(text) =>
+                setUser((oldValues) => ({ ...oldValues, name: text }))
+              }
             />
             <Input
               name='AGE'
               keyboardType='numeric'
               maxLength={3}
               onChangeText={(text) =>
-                setPeople({ ...people, age: parseInt(text) })
+                setUser((oldValues) => ({ ...oldValues, age: parseInt(text) }))
               }
             />
             <RNPickerSelect
               style={pickerSelectStyles}
-              onValueChange={(text) => setPeople({ ...people, gender: text })}
+              onValueChange={(text) =>
+                setUser((oldValues) => ({ ...oldValues, gender: text }))
+              }
               items={[
-                { label: "Male", value: "M" },
-                { label: "Female", value: "F" },
+                { label: 'Male', value: 'M' },
+                { label: 'Female', value: 'F' },
               ]}
             />
           </Form>

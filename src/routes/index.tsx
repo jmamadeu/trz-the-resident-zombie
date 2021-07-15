@@ -13,12 +13,12 @@ export const Routes: FC = () => {
   const { people } = useSignIn();
 
   useEffect(() => {
-    console.log("PPP", people);
+    console.log("NEW PP", people);
   }, []);
 
   return (
     <NavigationContainer>
-      {people?.id ? <AuthRoute /> : <Register />}
+      {people?.id ? <AuthRoute /> : <Main /> } 
     </NavigationContainer>
   );
 };

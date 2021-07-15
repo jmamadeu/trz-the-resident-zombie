@@ -11,7 +11,7 @@ import React, {
 import { api } from "../services/rest.api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-type People = {
+export type People = {
   id: string;
   name: string;
   age: number;
@@ -21,11 +21,19 @@ type People = {
   infected: boolean;
 };
 
+export interface UserProperties {
+  name: string;
+  age: number;
+  gender: string;
+  lonlat: string;
+  items: string;
+}
+
 type SignInContextData = {
   people: People;
   setPeople: Function;
   loading: boolean;
-  signIn: () => Promise<void>;
+  signIn: (user: UserProperties) => Promise<void>;
   getFromLocalStorage: () => Promise<void>;
 };
 
@@ -39,18 +47,17 @@ const SignInProvider: FC<SignInProviderProps> = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [people, setPeople] = useState<People>({} as People);
 
-  const signIn = useCallback(async () => {
+  const signIn = useCallback(async (user: UserProperties) => {
     setLoading(true);
-    // console.log(people);
     try {
-      await api.post("/people", people).then(async ({ data }) => {
+      await api.post("/people", user).then(async ({ data }) => {
         console.log("SIGNIN", data);
         await AsyncStorage.setItem("people", JSON.stringify(data));
         setPeople(data);
         setLoading(false);
       });
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
+      console.log(error?.message);
       setLoading(false);
     }
   }, []);
@@ -62,8 +69,6 @@ const SignInProvider: FC<SignInProviderProps> = ({ children }) => {
       const peopleLogged = (await JSON.parse(storage)) as People;
       setPeople(peopleLogged);
     }
-
-    // console.log(storage);
   }, []);
 
   useEffect(() => {

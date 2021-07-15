@@ -12,39 +12,10 @@ interface Local {
 }
 
 export const AuthRoute: FC = () => {
-  const { people } = useSignIn();
-
-  const [localStorageData, setLocalStorageData] = useState<Local>({} as Local);
-
-  async function getDataLocal() {
-    const localstorage = await AsyncStorage.getItem("people");
-    if (localstorage) {
-      const peopleLogged = (await JSON.parse(localstorage)) as any;
-      console.log("ll", peopleLogged);
-      setLocalStorageData(peopleLogged);
-    }
-  }
-
-  useEffect(() => {
-    getDataLocal();
-  }, []);
-
-  const userScreen = {
-    Home,
-    ContactList,
-  };
-  const authScreen = {
-    Register,
-  };
-
   return (
     <Navigator
       headerMode='none'
       screenOptions={{ cardStyle: { backgroundColor: "transparent" } }}>
-      {Object.entries({
-        ...(localStorageData?.id ? userScreen.Home : authScreen?.Register),
-      })}
-
       <Screen name='Home' component={Home} />
       <Screen name='ContactList' component={ContactList} />
     </Navigator>

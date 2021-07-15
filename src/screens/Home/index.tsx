@@ -1,15 +1,15 @@
-import { useNavigation } from "@react-navigation/native";
-import React, { FC, useEffect, useState } from "react";
-import { FlatList, ScrollView } from "react-native";
-import { Image } from "react-native";
-import Background from "../../components/Background";
-import Button from "../../components/Button";
-import ListItems from "../../components/ListItems";
-import ListReportPeople from "../../components/ListReportPeople";
-import { StatusIndictior } from "../../components/ListReportPeople/styles";
-import { images } from "../../constants";
-import { useSignIn } from "../../hooks/signin";
-import { api } from "../../services/rest.api";
+import { useNavigation } from '@react-navigation/native';
+import React, { FC, useEffect, useState } from 'react';
+import { FlatList, ScrollView } from 'react-native';
+import { Image } from 'react-native';
+import Background from '../../components/Background';
+import Button from '../../components/Button';
+import ListItems from '../../components/ListItems';
+import ListReportPeople from '../../components/ListReportPeople';
+import { StatusIndictior } from '../../components/ListReportPeople/styles';
+import { images } from '../../constants';
+import { useSignIn } from '../../hooks/signin';
+import { api } from '../../services/rest.api';
 import {
   Header,
   PeopleInformation,
@@ -23,8 +23,8 @@ import {
   Option,
   Title,
   Description,
-} from "./styles";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+} from './styles';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface People {
   name: string;
@@ -36,7 +36,7 @@ const Home: FC = () => {
   const [peopleList, setPeopleList] = useState<People[]>([]);
   const navigation = useNavigation();
   const [items, setItems] = useState([]);
-  const { people, getFromLocalStorage } = useSignIn();
+  const { people, getFromLocalStorage, setPeople } = useSignIn();
 
   const getPeople = async () => {
     try {
@@ -61,7 +61,7 @@ const Home: FC = () => {
   };
 
   useEffect(() => {
-    console.log("XXXX", people);
+    console.log('XXXX', people);
   }, [people]);
 
   useEffect(() => {
@@ -72,7 +72,7 @@ const Home: FC = () => {
     try {
       await api
         .post(`/people/${personId}/report_infection.json`, {
-          infected: "41974fad-1ff3-45e9-9a8b-afab94a372ec",
+          infected: '41974fad-1ff3-45e9-9a8b-afab94a372ec',
         })
         .then((response) => console.log(response));
     } catch (error) {
@@ -103,7 +103,7 @@ const Home: FC = () => {
         <OptionsContainer>
           <Option
             marginRight
-            onPress={() => navigateTo("ContactList")}
+            onPress={() => navigateTo('ContactList')}
             title='Negociate'>
             <Image source={images.People} />
             <Title>Contacts</Title>
@@ -140,7 +140,10 @@ const Home: FC = () => {
         </DynamicContent>
         <Footer>
           <Button
-            onPress={() => AsyncStorage.removeItem("people")}
+            onPress={() => {
+              AsyncStorage.removeItem('people');
+              setPeople({});
+            }}
             title='Negociate'
           />
         </Footer>

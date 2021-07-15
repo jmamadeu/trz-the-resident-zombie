@@ -1,8 +1,7 @@
-import axios from "axios";
-const { API_URL } = process.env;
+import axios from 'axios';
 
 const api = axios.create({
-  baseURL: "http://zssn-backend-example.herokuapp.com/api",
+  baseURL: 'http://zssn-backend-example.herokuapp.com/api',
 });
 
 export { api };
