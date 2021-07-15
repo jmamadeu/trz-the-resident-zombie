@@ -9,6 +9,7 @@ import {
   Rajdhani_600SemiBold,
 } from "@expo-google-fonts/rajdhani";
 import { Routes } from "./routes";
+import { SignInProvider } from "./hooks/signin";
 
 const App: FC = () => {
   const [fontsLoaded] = useFonts({
@@ -27,7 +28,9 @@ const App: FC = () => {
         backgroundColor='transparent'
         translucent
       />
-      <Routes />
+      <SignInProvider>
+        <Routes />
+      </SignInProvider>
     </>
   );
 };

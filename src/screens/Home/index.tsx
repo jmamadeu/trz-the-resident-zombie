@@ -1,6 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import React, { FC, useEffect, useState } from "react";
-import { FlatList, ScrollView, View } from "react-native";
+import { FlatList, ScrollView } from "react-native";
 import { Image } from "react-native";
 import Background from "../../components/Background";
 import Button from "../../components/Button";
@@ -8,6 +8,7 @@ import ListItems from "../../components/ListItems";
 import ListReportPeople from "../../components/ListReportPeople";
 import { StatusIndictior } from "../../components/ListReportPeople/styles";
 import { images } from "../../constants";
+import { useSignIn } from "../../hooks/signin";
 import { api } from "../../services/rest.api";
 import {
   Header,
@@ -23,6 +24,7 @@ import {
   Title,
   Description,
 } from "./styles";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface People {
   name: string;
@@ -31,18 +33,36 @@ interface People {
 }
 
 const Home: FC = () => {
-  const [people, setPeople] = useState<People[]>([]);
+  const [peopleList, setPeopleList] = useState<People[]>([]);
   const navigation = useNavigation();
+  const [items, setItems] = useState([]);
+  const { people, getFromLocalStorage } = useSignIn();
 
   const getPeople = async () => {
     try {
-      await api
-        .get("/people")
-        .then((peopleResponse) => setPeople(peopleResponse.data));
+      await api.get(`/people`).then((peopleResponse) => {
+        setPeopleList(peopleResponse?.data);
+      });
     } catch (error) {
       console.log(error);
     }
   };
+
+  const getPeopleItem = async () => {
+    try {
+      await api
+        .get(`/people/${people?.id}/properties.json`)
+        .then((peopleResponse) => {
+          console.log(peopleResponse?.data), setItems(peopleResponse?.data);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    console.log("XXXX", people);
+  }, [people]);
 
   useEffect(() => {
     getPeople();
@@ -71,7 +91,7 @@ const Home: FC = () => {
           <Left>
             <Image source={images.HeaderLogo} />
             <PeopleInformation>
-              <Name>Domingos,</Name>
+              <Name>{people.name},</Name>
               <Intro>Your survival starts here.</Intro>
             </PeopleInformation>
           </Left>
@@ -102,7 +122,7 @@ const Home: FC = () => {
         <DynamicContent>
           <FlatList
             showsVerticalScrollIndicator={false}
-            data={people}
+            data={peopleList}
             initialNumToRender={3}
             contentContainerStyle={{ height: 270 }}
             renderItem={({ item }) => (
@@ -119,7 +139,10 @@ const Home: FC = () => {
           />
         </DynamicContent>
         <Footer>
-          <Button onPress={() => navigateTo("ContactList")} title='Negociate' />
+          <Button
+            onPress={() => AsyncStorage.removeItem("people")}
+            title='Negociate'
+          />
         </Footer>
       </ScrollView>
     </Background>
